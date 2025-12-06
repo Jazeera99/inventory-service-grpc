@@ -1,0 +1,80 @@
+syntax = "proto3";
+
+package inventory;
+
+option go_package = "./proto";
+
+// Struktur data Item
+message Item {
+  string barcode = 1;        // Barcode unik barang
+  string nama_barang = 2;    // Nama barang
+  int32 qty_onhand = 3;      // Jumlah stok tersedia
+}
+
+// Request untuk menambah item baru
+message AddItemRequest {
+  string barcode = 1;
+  string nama_barang = 2;
+  int32 qty_onhand = 3;
+}
+
+message AddItemResponse {
+  Item item = 1;
+  string message = 2;
+}
+
+// Request untuk scan barcode
+message ScanBarcodeRequest {
+  string barcode = 1;
+}
+
+// Request untuk update stok (barang masuk/keluar)
+message UpdateStockRequest {
+  string barcode = 1;
+  int32 quantity = 2;       // Positif = masuk, Negatif = keluar
+  string keterangan = 3;    // "Pembelian", "Penjualan", "Return", dll
+}
+
+message UpdateStockResponse {
+  Item item = 1;
+  string message = 2;
+  int32 stok_sebelum = 3;
+  int32 stok_sesudah = 4;
+}
+
+// Request untuk list semua item
+message ListItemsRequest {
+  bool only_low_stock = 1;  // Filter item dengan stok rendah
+  int32 low_stock_threshold = 2;
+}
+
+message ListItemsResponse {
+  repeated Item items = 1;
+  int32 total = 2;
+}
+
+// Request untuk cek stok
+message CheckStockRequest {
+  string barcode = 1;
+}
+
+message CheckStockResponse {
+  string barcode = 1;
+  string nama_barang = 2;
+  int32 qty_onhand = 3;
+  string status = 4;  // "Tersedia", "Stok Rendah", "Habis"
+}
+
+// Service definition
+service InventoryService {
+  // Manajemen item
+  rpc AddItem(AddItemRequest) returns (AddItemResponse);
+  rpc ScanBarcode(ScanBarcodeRequest) returns (Item);
+  
+  // Manajemen stok
+  rpc UpdateStock(UpdateStockRequest) returns (UpdateStockResponse);
+  rpc CheckStock(CheckStockRequest) returns (CheckStockResponse);
+  
+  // Reporting
+  rpc ListItems(ListItemsRequest) returns (ListItemsResponse);
+}
