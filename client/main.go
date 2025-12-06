@@ -17,7 +17,7 @@ func main() {
 	// 1. Koneksi ke Server
 	// KITA PAKAI LOCALHOST.
 	// Saat server di Debian pun, karena pakai Port Forwarding, Windows tetap nembak ke localhost.
-	target := "localhost:50051"
+	target := "135.79.1.11:50051"
 
 	conn, err := grpc.Dial(target, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
